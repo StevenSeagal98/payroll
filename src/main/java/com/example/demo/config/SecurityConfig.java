@@ -2,12 +2,12 @@ package com.example.demo.config;
 
 import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 
 import java.util.Collection;
 
@@ -22,20 +24,28 @@ import java.util.Collection;
 public class SecurityConfig {
 
     @Bean
+    AccessDeniedHandler accessDeniedHandler() {
+        AccessDeniedHandlerImpl handler = new AccessDeniedHandlerImpl();
+        handler.setErrorPage("/access-denied");
+        return handler;
+    }
+
+    @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/login", "/signup", "/**").permitAll()  // Fixed matcher
-                        .anyRequest().authenticated()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/employee-demos").hasAuthority("ADMIN")
+                        .requestMatchers("/dashboard").hasAnyAuthority("ADMIN", "USER")
+                        .requestMatchers("/pto").hasAuthority("USER")
                 )
+                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler()))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
-                .logout(logout -> logout
-                        .permitAll()
-                )
+                .logout(LogoutConfigurer::permitAll)
                 .build();
     }
 

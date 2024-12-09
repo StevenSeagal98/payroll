@@ -22,7 +22,7 @@ public class AuthenticationService implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
-                .password(user.getPassword()) // Assuming the password is already encoded
+                .password(user.getPassword())
                 .roles(user.getRole())
                 .build();
     }

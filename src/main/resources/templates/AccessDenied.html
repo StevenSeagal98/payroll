@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head"></head>
+<body data-theme="light">
+<!-- Only insert page-specific content here -->
+<main th:fragment="content" class="h-screen w-screen flex flex-row flex-wrap justify-center items-center">
+    <h1 class="text-4xl w-full text-center my-2">Access Denied</h1>
+    <p class="my-2">Role: <span th:text="${role}"></span></p>
+</main>
+</body>
+</html>
