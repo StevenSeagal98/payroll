@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Payroll | ' + ${title}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/main.css" rel="stylesheet" type="text/css">
+    <script src="/index.js" type="application/javascript" defer></script>
+</head>
+<body data-theme="light">
+    <div th:replace="~{fragments/MainNav :: navbar}"></div>
+    <div th:insert="~{::content}"></div>
+</body>
+</html>

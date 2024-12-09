@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head">
+    <title th:text="${title}"></title>
+</head>
+<body data-theme="light">
+    <main th:fragment="content" class="md:w-2/3 p-12 w-full mx-auto">
+        <h1 class="font-semibold text-3xl my-2" th:text="${title}"></h1>
+        <div class="my-2 py-2">
+            <label class="input input-bordered flex items-center gap-2">
+                <input id="search-input" type="text" class="grow" placeholder="Search" />
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 16 16"
+                        fill="currentColor"
+                        class="h-4 w-4 opacity-70">
+                    <path
+                            fill-rule="evenodd"
+                            d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                            clip-rule="evenodd" />
+                </svg>
+            </label>
+        </div>
+        <div id="employees-cont" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 my-2">
+            <div class="card border-solid border-2 border-slate-200 shadow-lg w-full" th:each="employee : ${employees}">
+                <div class="card-body flex flex-wrap justify-between items-stretch">
+                    <h4 class="font-semibold text-xl" th:text="${employee.firstName} + ' ' + ${employee.lastName}"></h4>
+                    <p th:text="'Job Title: ' + ${employee.jobTitle}"></p>
+                    <p th:text="'Department: ' + ${employee.department}"></p>
+                    <p th:text="'Gender: ' + ${employee.gender}"></p>
+                    <p th:text="'Status: ' + ${employee.status}"></p>
+                    <p th:text="'Pay Type: ' + ${employee.payType}"></p>
+                    <a th:href="'mailto:' + ${employee.email}" th:text="'Email: ' + ${employee.email}"></a>
+                    <div class="card-actions w-full my-2">
+                        <button class="btn btn-primary">Edit</button>
+                        <button class="btn btn-neutral">View Payroll Information</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:inline="javascript">
+            const setEmployeesMarkup = (activeEmployees = []) => {
+                const parentDiv = document.querySelector('#employees-cont');
+                if(!parentDiv || activeEmployees.length <= 0) {
+                    return;
+                }
+                parentDiv.innerHTML = '';
+                for(const employee of activeEmployees) {
+                    const employeeCard = document.createElement('div');
+                    employeeCard.classList.add('card border-solid border-2 border-slate-200 shadow-lg w-full');
+                    parentDiv.appendChild(employeeCard);
+
+                    const cardBody = document.createElement('div');
+                    cardBody.classList.add('card-body flex flex-wrap justify-between items-stretch');
+                    employeeCard.appendChild(cardBody);
+
+                    const employeeName = document.createElement('h4');
+                    employeeName.classList.add('font-semibold text-xl');
+                    employeeName.innerText = `${employee.firstName} + ' ' + ${employee.lastName}`;
+                    cardBody.appendChild(employeeName);
+
+                    const elsToCreate = [
+                        ['Job Title', 'jobTitle'],
+                        ['Department', 'department'],
+                        ['Gender', 'gender'],
+                        ['Employment Status', 'status'],
+                        ['Pay Type', 'payType'],
+                        ['Email', 'email']
+                    ];
+                    for(const field of elsToCreate) {
+                        const el = document.createElement('p');
+                        el.innerText = `${field[0]}: ${employee[field[1]]}`;
+                        cardBody.appendChild(el);
+                    }
+                }
+            }
+            class Publisher {
+                constructor() {
+                    this.currentEmployees = [];
+                    this.subscribers = [];
+                }
+                set currentEmployees(currentEmployees) {
+                    this.currentEmployees = currentEmployees;
+                    this.#broadcast();
+                }
+                subscribe(subscriber) {
+                    this.subscribers.push(subscriber);
+                }
+                unsubscribe(subscriber) {
+                    const idx = this.subscribers.indexOf(subscriber);
+                    if (idx >= 0) {
+                        this.subscribers.splice(idx, 1);
+                    }
+                }
+                #broadcast() {
+                    for(const sub of this.subscribers) {
+                        sub(this.currentEmployees);
+                    }
+                }
+            }
+            const initSearchBox = (updatePublisher, employeesList) => {
+                const searchBox = document.querySelector('#search-input');
+                if(!searchBox || !updatePublisher) {
+                    return;
+                }
+                searchBox.addEventListener('input', e => {
+                    e.preventDefault();
+                    updatePublisher.currentEmployees = [];
+                    const updatedEmployees = [...employeesList]
+                })
+            }
+            const init = () => {
+                const employees = /*[[${employees}]]*/ [];
+                const employeeSearchWatcher = new Publisher();
+                employeeSearchWatcher.subscribe(setEmployeesMarkup);
+                employeeSearchWatcher.currentEmployees = [...employees];
+            }
+            document.addEventListener('DOMContentLoaded', e => init);
+        </script>
+    </main>
+</body>
+</html>
