@@ -1,45 +1,50 @@
 package com.example.demo.config;
 
 import com.example.demo.enums.Gender;
+import com.example.demo.enums.MedicalCoverage;
 import com.example.demo.models.Employee;
-import com.example.demo.models.Payroll;
-import com.example.demo.models.WorkEntry;
 import com.example.demo.repositories.EmployeeRepository;
-import com.example.demo.repositories.PayrollRepository;
-import com.example.demo.repositories.WorkEntryRepository;
+import com.example.demo.repositories.HoursWorkedRepository;
+import com.example.demo.services.EmployeeService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import com.example.demo.models.HoursWorked;
 
 @Configuration
 public class SeedEmployees {
+    private final HoursWorkedRepository hoursWorkedRepository;
+
+    public SeedEmployees(HoursWorkedRepository hoursWorkedRepository) {
+        this.hoursWorkedRepository = hoursWorkedRepository;
+    }
 
     @Bean
-    CommandLineRunner seedEmployeeData(
-            EmployeeRepository employeeRepository,
-            WorkEntryRepository workEntryRepository,
-            PayrollRepository payrollRepository
-    ) {
+    CommandLineRunner seedEmployeeData(EmployeeService employeeService) {
         return args -> {
-            // Create and save employees
             Employee employeeOne = new Employee(
-                    "John",
-                    "Doe",
-                    "Software Engineer",
+                    "Nate",
+                    "Orona",
+                    "Software Developer",
                     "Engineering",
                     Gender.MALE,
                     "Active",
-                    "Salary",
-                    "johndoe@gmail.com",
-                    "2124 E Glendale Blvd",
+                    "Hourly",
+                    "nateodev@gmail.com",
+                    "1234 Broad St",
                     "",
                     "Valparaiso",
                     "IN",
                     "46383",
-                    ""
+                    "",
+                    55,
+                    MedicalCoverage.FAMILY,
+                    3,
+                    LocalDate.of(2024, 3, 21)
             );
             Employee employeeTwo = new Employee(
                     "Jane",
@@ -55,7 +60,11 @@ public class SeedEmployees {
                     "Valparaiso",
                     "IN",
                     "47383",
-                    ""
+                    "",
+                    70000,
+                    MedicalCoverage.FAMILY,
+                    3,
+                    LocalDate.of(2018, 11, 23)
             );
             Employee employeeThree = new Employee(
                     "Jim",
@@ -64,92 +73,37 @@ public class SeedEmployees {
                     "Accounting",
                     Gender.NONBINARY,
                     "Active",
-                    "Salary",
+                    "Hourly",
                     "jimdoe@gmail.com",
                     "5555 5th St.",
                     "",
                     "Chicago",
                     "IL",
                     "55555",
-                    ""
+                    "",
+                    45.25,
+                    MedicalCoverage.FAMILY,
+                    3,
+                    LocalDate.of(2019, 10, 19)
             );
-            employeeRepository.saveAll(List.of(employeeOne, employeeTwo, employeeThree));
-
             Employee[] employees = {employeeOne, employeeTwo, employeeThree};
 
-            // Create and save work entries for each employee
-            for (Employee emp : employees) {
-                WorkEntry weOne = new WorkEntry(
-                        emp,
-                        LocalDate.of(2024, 11, 15),
-                        9.0,
-                        false,
-                        false
-                );
-                WorkEntry weTwo = new WorkEntry(
-                        emp,
-                        LocalDate.of(2024, 11, 20),
-                        10.0,
-                        true,
-                        true
-                );
-                WorkEntry weThree = new WorkEntry(
-                        emp,
-                        LocalDate.of(2024, 11, 25),
-                        8.5,
-                        true,
-                        false
-                );
-                workEntryRepository.saveAll(List.of(weOne, weTwo, weThree));
+            LocalDate today = LocalDate.now();
+            for(Employee employee : employees) {
+                List<HoursWorked> hoursWorkedList = new ArrayList<>();
+                employeeService.createEmployee(employee);
+                for(int i = 1; i <= 7; i++) {
+                    LocalDate date = today.minusDays(i);
+                    HoursWorked hoursWorked = new HoursWorked();
+                    hoursWorked.setEmployee(employee);
+                    hoursWorked.setDate(date);
+                    hoursWorked.setHours(8);
+                    hoursWorked.setConfirmed(false);
+                    hoursWorked.setIsPTO(employee.getPayType().equalsIgnoreCase("salary"));
+                    hoursWorkedList.add(hoursWorked);
+                }
+                hoursWorkedRepository.saveAll(hoursWorkedList);
             }
-
-            // Create and save payroll entries for each employee
-            Payroll payrollOne = new Payroll(
-                    employeeOne,
-                    1000.0,
-                    800.0,
-                    50.0,
-                    100.0,
-                    100.0,
-                    62.0,
-                    62.0,
-                    29.0,
-                    29.0,
-                    50.0,
-                    0.0,
-                    "2024-11-15"
-            );
-            Payroll payrollTwo = new Payroll(
-                    employeeTwo,
-                    1200.0,
-                    900.0,
-                    60.0,
-                    120.0,
-                    120.0,
-                    74.4,
-                    74.4,
-                    34.8,
-                    34.8,
-                    60.0,
-                    50.0,
-                    "2024-11-20"
-            );
-            Payroll payrollThree = new Payroll(
-                    employeeThree,
-                    1500.0,
-                    1100.0,
-                    75.0,
-                    150.0,
-                    150.0,
-                    93.0,
-                    93.0,
-                    43.5,
-                    43.5,
-                    75.0,
-                    100.0,
-                    "2024-11-25"
-            );
-            payrollRepository.saveAll(List.of(payrollOne, payrollTwo, payrollThree));
         };
     }
 }

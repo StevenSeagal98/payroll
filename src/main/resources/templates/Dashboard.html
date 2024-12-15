@@ -6,6 +6,10 @@
 <div th:fragment="content">
     <h1 class="text-4xl">Dashboard</h1>
     <p>Content</p>
+    <form action="/logout" method="POST">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="btn">Logout</button>
+    </form>
 </div>
 </body>
 </html>

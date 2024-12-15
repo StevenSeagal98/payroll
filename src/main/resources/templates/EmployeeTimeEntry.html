@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head"></head>
+<body data-theme="light">
+<div th:insert="fragments/UserNav.html"></div>
+<main th:fragment="content" class="flex flex-row flex-wrap justify-center items-center">
+    <div class="w-full flex justify-start items-center p-2 bg-stone-200 p-2 ">
+        <button class="btn btn-primary mr-2" onclick="popModal(false)" th:if="${employee.payType.toLowerCase() == 'hourly'} ">
+            Add Time
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+        </button>
+        <button class="btn btn-primary my-2" onclick="popModal(true)">
+            Create PTO Request
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Zm0 2.25h.008v.008h-.008v-.008Z" />
+            </svg>
+        </button>
+    </div>
+    <div class="w-full rounded-lg p-4 m-4 shadow" th:if="${deductions != null}">
+        <h1>Payroll Details For the Previous 7 Days</h1>
+        <p>Gross Pay: $<span th:text="${deductions.grossPay}">0.0</span></p>
+        <p>Net Pay: $<span th:text="${deductions.netPay}">0.0</span></p>
+        <p>Deductions: $<span th:text="${deductions.deductions}">0.0</span></p>
+        <h2>Tax Breakdown:</h2>
+        <ul>
+            <li>State Tax: $<span th:text="${deductions.stateTax}">0.0</span></li>
+            <li>Federal Tax (Employee): $<span th:text="${deductions.federalTaxEmployee}">0.0</span></li>
+            <li>Social Security Tax (Employee): $<span th:text="${deductions.socialSecurityTaxEmployee}">0.0</span></li>
+            <li>Medicare Tax (Employee): $<span th:text="${deductions.medicareTaxEmployee}">0.0</span></li>
+        </ul>
+    </div>
+    <dialog id="time-modal" class="modal">
+        <div class="modal-box">
+            <form id="time-input-form" class="flex flex-col justify-start flex-wrap items-center" method="POST" th:action="@{/employee/time-entry}" th:model="hoursWorked">
+                <h3 id="form-header"></h3>
+                <input type="hidden" th:value="${employee.employeeId}" name="employeeId">
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Select A Date</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="date" name="date" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Hours Worked</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="number" name="hours" required />
+                </label>
+                <input type="hidden" name="isPTO" id="isPTOInput">
+                <input type="submit" value="Submit" class="btn btn-primary w-full max-w-xs" />
+                <button class="btn btn-danger my-2">Close</button>
+            </form>
+        </div>
+    </dialog>
+    <!--Edit entry-->
+    <dialog id="edit-modal" class="modal">
+        <div class="modal-box">
+            <h3 id="form-header"></h3>
+            <form id="edit-input-form" class="flex flex-col justify-start flex-wrap items-center" method="POST" th:action="@{/employee/time-entry/edit}">
+                <input type="hidden" th:value="${employee.employeeId}" name="employeeId">
+                <input type="hidden" id="editId" name="id">
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Select A Date</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="date" id="editDate" name="date" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Hours Worked</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" id="editHours" type="number" name="hours" required />
+                </label>
+                <input type="hidden" name="isPTO" id="editIsPTOInput">
+                <input type="submit" value="Submit" class="btn btn-primary w-full max-w-xs" />
+                <button class="btn btn-danger my-2">Close</button>
+            </form>
+        </div>
+    </dialog>
+    <!--Main loop-->
+    <div class="card rounded shadow m-2 p-2 border border-2 w-full" th:each="entry : ${hoursWorkedList}">
+        <div class="card-body text-center">
+            <p class="font-semibold my-2" th:text="'Date: ' + ${entry.date}"></p>
+            <p class="font-semibold my-2" th:text="'Approved: ' + ${entry.confirmed}"></p>
+            <h3 class="font-semibold my-2" th:text="'Hours: ' + ${entry.hours}"></h3>
+            <h3 class="font-semibold my-2" th:text="'PTO Request: ' + ${entry.isPTO}"></h3>
+        </div>
+        <div class="card-actions">
+            <button
+                    class="btn btn-warning edit-btn"
+                    th:data-id="${entry.id}"
+                    th:data-confirmed="${entry.confirmed}"
+                    th:data-hours="${entry.hours}"
+                    th:data-date="${entry.date}"
+                    th:data-isPto="${entry.isPTO}">
+                Edit
+            </button>
+            <form th:action="@{/employee/time-entry/delete}" method="POST">
+                <input type="hidden" name="id" th:value="${entry.id}">
+                <input type="hidden" name="confirmed" th:value="${entry.confirmed}">
+                <button type="submit" class="btn btn-error">Delete</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const popModal = (isPTO) => {
+            const modal = document.querySelector('#time-modal');
+            if(!modal) return
+            try {
+                const isPtoInput = document.querySelector('#isPTOInput');
+                isPtoInput.value = isPTO;
+                const formHeader = document.querySelector('#form-header');
+                formHeader.innerText = isPTO ? 'PTO Request' : 'Time Entry';
+                modal.showModal();
+            } catch(err) {
+                console.error('Error opening modal: ', err);
+            }
+        }
+        const handleEdits = () => {
+            const btns = document.querySelectorAll('.edit-btn');
+            if(!btns.length) return;
+            for(const editBtn of btns) {
+                editBtn.onclick = e => {
+                    e.preventDefault();
+                    const { id, hours, confirmed, date, isPto } = e.target.dataset;
+                    if(JSON.parse(confirmed) === true) {
+                        window.alert('This entry has already been confirmed by your administrator.')
+                        return;
+                    }
+                    const modalInputMap = {
+                        'editId': id,
+                        'editDate': date,
+                        'editHours': hours,
+                        'editIsPTOInput': isPto,
+                    }
+                    for(const [key, val] of Object.entries(modalInputMap)) {
+                        console.log('Looking for key: ', key);
+                        console.log(document.getElementById(key));
+                        console.log('Val: ', val);
+                        document.getElementById(key).value = val ?? false;
+                    }
+                    const editModal = document.querySelector('#edit-modal');
+                    editModal.showModal();
+                }
+            }
+        }
+        handleEdits();
+    </script>
+</main>
+</body>
+</html>

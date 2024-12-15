@@ -4,6 +4,8 @@
     <title th:text="${title}"></title>
 </head>
 <body data-theme="light">
+<div th:insert="fragments/AdminNav.html"></div>
+
     <main th:fragment="content" class="md:w-2/3 p-12 w-full mx-auto">
         <h1 class="font-semibold text-3xl my-2" th:text="${title}"></h1>
         <div class="my-2 py-2">

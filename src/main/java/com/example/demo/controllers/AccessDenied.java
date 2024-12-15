@@ -11,12 +11,10 @@ public class AccessDenied {
     @GetMapping("/access-denied")
     public String accessDeniedPage(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = auth.getPrincipal();
         String role = auth.getAuthorities().toString();
 
         model.addAttribute("role", role);
-        model.addAttribute("principal", principal);
-        model.addAttribute("requiredRole", role);
+        model.addAttribute("title", "Access Denied");
         return "AccessDenied";
     }
 }

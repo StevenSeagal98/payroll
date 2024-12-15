@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head"></head>
+<body data-theme="light">
+<div th:insert="fragments/AdminNav.html"></div>
+<main th:fragment="content" class="min-h-screen w-screen flex flex-row flex-wrap justify-center items-center">
+    <h1 class="text-4xl w-full text-center mb-2">Employees</h1>
+
+    <button class="btn" id="create-modal-btn">Create New Employee</button>
+
+    <!--Use JS to display message if employee was created-->
+    <div id="created-employee"></div>
+
+    <!--Main loop of employee cards-->
+    <div class="w-full px-4 flex justify-between">
+        <div class="card border-solid border-2 border-slate-200 shadow-lg w-full my-2" th:each="employee : ${employees}">
+            <div class="card-body flex flex-wrap justify-between items-stretch">
+                <h4 class="font-semibold text-xl" th:text="${employee.firstName} + ' ' + ${employee.lastName}"></h4>
+                <p th:text="'Job Title: ' + ${employee.jobTitle}"></p>
+                <p th:text="'Department: ' + ${employee.department}"></p>
+                <p th:text="'Gender: ' + ${employee.gender}"></p>
+                <p th:text="'Status: ' + ${employee.status}"></p>
+                <p th:text="'Pay Type: ' + ${employee.payType}"></p>
+                <a th:href="'mailto:' + ${employee.email}" th:text="'Email: ' + ${employee.email}"></a>
+                <div class="card-actions w-full my-2">
+                    <a class="btn btn-warning" th:href="'/admin/employees/edit/' + ${employee.getEmployeeId()}">Edit</a>
+                    <form th:action="@{/admin/employees/delete}" method="POST">
+                        <input type="hidden" name="id" th:value="${employee.getEmployeeId()}">
+                        <button class="btn btn-error" type="submit">Delete Employee</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Create a new user-->
+    <dialog id="create-modal" class="modal">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-semibold text-lg mb-4">Create New Employee</h3>
+            <form class="form m-auto w-full max-w-md" method="POST" th:action="@{/admin/employees}" th:model="${emp}">
+                <input type="hidden" name="status" th:value="${true}">
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">First Name</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="John" name="firstName" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Last Name</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Doe" name="lastName" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Job Title</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Software Engineer" name="jobTitle" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Department</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Engineering" name="department" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Gender</span>
+                    </div>
+                    <select class="select select-bordered w-full max-w-xs" name="gender" required>
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="NONBINARY">Nonbinary</option>
+                    </select>
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Email</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="email" placeholder="john.doe@gmail.com" name="email" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Address Line 1</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="123 Main St" name="addressLine1" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Address Line 2</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Apt 4B" name="addressLine2" />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">City</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="New York" name="city" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">State</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="NY" name="state" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Zip Code</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="text" placeholder="10001" name="zip" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Pay Rate</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="number" placeholder="60000" name="salary" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Pay Type</span>
+                    </div>
+                    <select class="select select-bordered w-full max-w-xs" name="payType" required>
+                        <option value="" disabled selected>Select Pay Type</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Family">Hourly</option>
+                    </select>
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Medical Coverage</span>
+                    </div>
+                    <select class="select select-bordered w-full max-w-xs" name="medicalCoverage" required>
+                        <option value="" disabled selected>Select Coverage</option>
+                        <option value="SINGLE">Single</option>
+                        <option value="FAMILY">Family</option>
+                    </select>
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Number of Dependents</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="number" min="0" placeholder="2" name="dependents" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Hire Date</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="date" name="hireDate" required />
+                </label>
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Profile Picture URL</span>
+                    </div>
+                    <input class="input input-bordered w-full max-w-xs" type="url" placeholder="http://example.com/image.jpg" name="pictureUrl" />
+                </label>
+                <div class="w-full mt-4">
+                    <input type="submit" class="btn btn-primary w-full" value="Create Employee" />
+                </div>
+            </form>
+        </div>
+    </dialog>
+    <script>
+        const addNewButton = document.querySelector('#create-modal-btn');
+        addNewButton.onclick = e => {
+            e.preventDefault();
+            try {
+                document.querySelector('#create-modal').showModal();
+            } catch(err) {
+                console.log('Error opening create modal: ', err);
+            }
+        }
+    </script>
+
+</main>
+</body>
+</html>

@@ -9,7 +9,7 @@
     <script src="/index.js" type="application/javascript" defer></script>
 </head>
 <body data-theme="light">
-    <div th:replace="~{fragments/MainNav :: navbar}"></div>
-    <div th:insert="~{::content}"></div>
+    <div class="min-h-screen h-fit" th:insert="~{::content}"></div>
+    <footer th:insert="fragments/Footer.html"></footer>
 </body>
 </html>
