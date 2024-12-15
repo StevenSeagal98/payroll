@@ -3,9 +3,42 @@
 <head th:replace="base :: head"></head>
 
 <body>
+<div th:insert="fragments/AdminNav.html"></div>
 <div th:fragment="content">
-    <h1 class="text-4xl">Payroll</h1>
-    <p>Content</p>
+    <h1 class="text-2xl font-semibold">Payroll</h1>
+    <table class="table table-zebra table-pin-rows">
+        <thead>
+        <tr>
+            <th>Employee Name</th>
+            <th>Gross Pay</th>
+            <th>Net Pay</th>
+            <th>Deductions</th>
+            <th>State Tax</th>
+            <th>Federal Tax (Employee)</th>
+            <th>Social Security Tax (Employee)</th>
+            <th>Medicare Tax (Employee)</th>
+            <th>Regular Hours Worked</th>
+            <th>Overtime Hours Worked</th>
+            <th>Overtime Pay</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="deductions : ${payrollDetails}">
+            <td th:text="${deductions.grossPay}"></td>
+            <td th:text="${deductions.netPay}"></td>
+            <td th:text="${deductions.deductions}"></td>
+            <td th:text="${deductions.stateTax}"></td>
+            <td th:text="${deductions.federalTaxEmployee}"></td>
+            <td th:text="${deductions.socialSecurityTaxEmployee}"></td>
+            <td th:text="${deductions.medicareTaxEmployee}"></td>
+            <td th:text="${deductions.regularHours}"></td>
+            <td th:text="${deductions.overtimeHours}"></td>
+            <td th:text="${deductions.overtimePay}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/payroll-report/printable" target="_blank">Download Printable Report</a>
 </div>
 </body>
 </html>

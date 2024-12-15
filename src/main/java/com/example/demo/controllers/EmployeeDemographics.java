@@ -15,7 +15,7 @@ public class EmployeeDemographics {
         this.employeeRepository = employeeRepository;
     }
 
-    @GetMapping("/employee-demos")
+    @GetMapping("/admin/employee-demos")
     public String employeeDemographics(Model model) {
         Iterable<Employee> employees = employeeRepository.findAll();
         model.addAttribute("title", "Employee Demographics");

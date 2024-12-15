@@ -1,0 +1,27 @@
+<!Doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head"></head>
+
+<body data-theme="light">
+<div th:insert="fragments/AdminNav.html"></div>
+<div th:fragment="content">
+    <h1 class="text-4xl">Salaries</h1>
+    <div id="employees-cont" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 my-2">
+        <div class="card border-solid border-2 border-slate-200 shadow-lg w-full" th:each="salary : ${salaries}">
+            <div class="card-body flex flex-wrap justify-between items-stretch">
+                <h4 class="font-semibold text-xl" th:text="${salary.firstName} + ' ' + ${salary.lastName}"></h4>
+                <p th:text="'Job Title: ' + ${salary.jobTitle}"></p>
+                <p th:text="'Department: ' + ${salary.department}"></p>
+                <p th:text="'Gender: ' + ${salary.gender}"></p>
+                <p th:text="'Status: ' + ${salary.status}"></p>
+                <p th:text="'Pay Type: ' + ${salary.payType}"></p>
+                <p th:text="'Base Salary: $' + ${salary.salary}"></p>
+                <p th:text="'Medical Coverage: ' + ${salary.medicalCoverage}"></p>
+                <p th:text="'Number of Dependents: ' + ${salary.dependents}"></p>
+                <a th:href="'mailto:' + ${salary.email}" th:text="'Email: ' + ${salary.email}"></a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

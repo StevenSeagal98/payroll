@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head"></head>
+<body data-theme="light">
+<div th:insert="fragments/AdminNav.html"></div>
+<main th:fragment="content" class="h-screen w-screen flex flex-row flex-wrap justify-center items-center">
+    <h1 class="text-4xl w-full text-center mb-2">Edit Employee</h1>
+    <form class="form m-auto w-full max-w-md" method="POST" th:action="@{/admin/employees/edit}" th:model="${emp}">
+        <input type="hidden" name="employeeId" th:value="${employee.getEmployeeId()}">
+        <input type="hidden" name="status" value="Active">
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">First Name</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="John" name="firstName" th:value="${employee.firstName}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Last Name</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Doe" name="lastName" th:value="${employee.lastName}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Job Title</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Software Engineer" name="jobTitle" th:value="${employee.jobTitle}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Department</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Engineering" name="department" th:value="${employee.department}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Gender</span>
+            </div>
+            <select class="select select-bordered w-full max-w-xs" name="gender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="NONBINARY">Nonbinary</option>
+            </select>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Email</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="email" placeholder="john.doe@gmail.com" name="email" th:value="${employee.email}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Address Line 1</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="123 Main St" name="addressLine1" th:value="${employee.addressLine1}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Address Line 2</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="Apt 4B" name="addressLine2" th:value="${employee.addressLine2}"/>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">City</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="New York" name="city" th:value="${employee.city}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">State</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="NY" name="state" th:value="${employee.state}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Zip Code</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="text" placeholder="10001" name="zip" th:value="${employee.zip}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Pay Rate</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="number" placeholder="60000" name="salary" th:value="${employee.salary}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Pay Type</span>
+            </div>
+            <select class="select select-bordered w-full max-w-xs" name="payType" required>
+                <option value="" disabled selected>Select Pay Type</option>
+                <option value="Salary">Salary</option>
+                <option value="Family">Hourly</option>
+            </select>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Medical Coverage</span>
+            </div>
+            <select class="select select-bordered w-full max-w-xs" name="medicalCoverage" required>
+                <option value="" disabled selected>Select Coverage</option>
+                <option value="SINGLE">Single</option>
+                <option value="FAMILY">Family</option>
+            </select>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Number of Dependents</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" th:value="${employee.dependents}" type="number" min="0" placeholder="2" name="dependents" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Hire Date</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="date" name="hireDate" th:value="${employee.hireDate}" required />
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Profile Picture URL</span>
+            </div>
+            <input class="input input-bordered w-full max-w-xs" type="url" th:value="${employee.pictureUrl}" placeholder="http://example.com/image.jpg" name="pictureUrl" />
+        </label>
+        <div class="w-full mt-4">
+            <input type="submit" class="btn btn-primary w-full" value="Create Employee" />
+        </div>
+    </form>
+</main>
+</body>
+</html>

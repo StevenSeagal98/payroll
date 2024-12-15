@@ -13,15 +13,7 @@ public class SeedUsers {
     @Bean
     public CommandLineRunner seedDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            if (userRepository.count() == 0) {
-                userRepository.save(new User("admin", "admin@example.com", passwordEncoder.encode("adminpassword"), "ADMIN"));
-                userRepository.save(new User("user1", "user1@example.com", passwordEncoder.encode("user1password"), "USER"));
-                userRepository.save(new User("user2", "user2@example.com", passwordEncoder.encode("user2password"), "USER"));
-                userRepository.save(new User("user3", "user3@example.com", passwordEncoder.encode("user3password"), "USER"));
-                userRepository.save(new User("user4", "user4@example.com", passwordEncoder.encode("user4password"), "USER"));
-
-                System.out.println("Seeded 5 users into the database.");
-            }
+            userRepository.save(new User("HR0001", "admin@example.com", passwordEncoder.encode("sU0fq1!1W_O8"), "ADMIN"));
         };
     }
 }

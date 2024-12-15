@@ -18,9 +18,9 @@ public class User {
     private String username;
     private String email;
 
-    private String password; // Should be stored in hashed format
+    private String password;
 
-    private String role; // Store role in the database (could be "USER" or "ADMIN")
+    private String role;
 
     public User() {}
 
